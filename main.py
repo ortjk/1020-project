@@ -1,4 +1,3 @@
-from engi1020.arduino.api import *
 import consolefunctions as cf
 import arduinofunctions as af
 
@@ -9,10 +8,11 @@ while True:
 
         # sign into account
         if choice == 1:
-            pass
+            user_id = af.user_select() + 1
+            print(f"Picked user number {user_id}")
 
         # create new account
-        if choice == 2:
+        elif choice == 2:
             cf.create_new_user()
             print("User created successfully. Returning to the main menu...\n")
         
@@ -22,5 +22,3 @@ while True:
 
     except ValueError:
         print("Error. Invalid Input. Please Try Again.\n")
-
-

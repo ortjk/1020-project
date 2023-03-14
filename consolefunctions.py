@@ -5,6 +5,9 @@ def verify_new_user_values(username="", email ="", password="", file_content="")
 
 
 def create_new_user():
+    """Prompts the user to enter the information to create a new user profile, adding the information to userdata.txt
+    
+    """
     with open("userdata.txt", "r") as file:
         # get input and verify that it is valid
         username = ""
