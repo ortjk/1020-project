@@ -8,8 +8,9 @@ while True:
 
         # sign into account
         if choice == 1:
-            user_id = af.user_select() + 1
-            print(f"Picked user number {user_id}")
+            user_id = af.user_select()
+            print(f"Selected user number {user_id + 1}")
+            af.enter_passcode(user_id)
 
         # create new account
         elif choice == 2:

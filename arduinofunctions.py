@@ -2,7 +2,7 @@ from engi1020.arduino.api import *
 
 class OledMenu:
     def get_spanned_lines(self, option: str) -> int:
-        option = len(option) / self.oled_line_max_characters
+        option = len(option) / 14
         if option <= 1:
             return 1
         elif option <= 2:
@@ -101,9 +101,6 @@ class OledMenu:
     
 
     def __init__(self, all_options: list):
-        self.oled_max_characters = 64
-        self.oled_line_max_characters = 14
-
         self.lines = []
         self.option_ids = []
 
@@ -130,15 +127,7 @@ class OledMenu:
         self.update_displayed_lines()
 
 
-def user_select() -> int:
-    with open("userdata.txt", "r") as file:
-        data = file.read()
-        data = data.split("\n")[:-1]
-
-        menu = OledMenu(data)
-
-    print("Select your username on the Arduino using the rotary dial and hit the button to proceed.")
-
+def rotary_scroll(menu):
     rotary = analog_read(0)
     while not digital_read(6):
         d_rotary = analog_read(0)
@@ -149,6 +138,59 @@ def user_select() -> int:
         
         rotary = analog_read(0)
 
-    oled_clear()
 
+def convert_rotary_value(reading: int) -> int:
+    return 9 - (reading // 102)
+
+
+def user_select() -> int:
+    data = ""
+    with open("userdata.txt", "r") as file:
+        data = file.read()
+        # read every 3rd line, starting at the first
+        data = data.split("\n")[:-1:3]
+
+    menu = OledMenu(data)
+
+    print("Select your username on the Arduino using the rotary dial and hit the button to proceed.")
+    rotary_scroll(menu)
+
+    oled_clear()
     return menu.selected_option_id
+
+
+def enter_passcode(user_id) -> bool:
+    entered_digits = ""
+    passcode = 0
+    with open("userdata.txt", "r") as file:
+        data = file.read()
+        passcode = data.split("\n")[2:-1:3][user_id]
+
+        user = data.split("\n")[:-1:3][user_id]
+        print(f'\nPlease enter the passcode for user "{user}" using the rotary dial and button.')
+        print("The current selected digit will be displayed on the screen, and the previously entered values will appear in the top left.")
+
+    selected_value = -2
+    while True:
+        if len(entered_digits) < 4:
+            # get hovered dial value
+            nvalue = convert_rotary_value(analog_read(0))
+            if selected_value != nvalue:
+                selected_value = nvalue
+                oled_clear()
+                oled_print(f"{entered_digits}_" + " " * (31 - len(entered_digits)) + f"    <- {selected_value} ->")
+
+            if digital_read(6):
+                entered_digits += f"{nvalue}"
+
+                while digital_read(6):
+                    pass
+
+                oled_clear()
+                oled_print(f"{entered_digits}_" + " " * (31 - len(entered_digits)) + f"    <- {selected_value} ->")
+        else:
+            oled_clear()
+            if entered_digits == passcode:
+                return True
+            else:
+                return False
