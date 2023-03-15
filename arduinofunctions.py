@@ -194,3 +194,46 @@ def enter_passcode(user_id) -> bool:
                 return True
             else:
                 return False
+            
+
+def view_accounts_option_select(user_id) -> int:
+    data = ""
+    with open("accounts.txt", "r") as file:
+        data = file.read()
+        # split account list by lines, and isolate user's accounts
+        data = data.split("\n")[user_id][:-1]
+        # split account names and passwords into seperate lists, and isolate names
+        data = data.split(";")[::2]
+    
+    menu = OledMenu(data)
+    rotary_scroll(menu)
+
+    oled_clear()
+    return menu.selected_option_id
+
+
+def signed_in_option_select():
+    options = ["View Accounts", "Add Account", "Reset Passcode", "Sign Out"]
+
+    menu = OledMenu(options)
+    rotary_scroll(menu)
+
+    oled_clear()
+    return menu.selected_option_id
+
+
+def view_password(user_id, account_id):
+    data = ""
+    with open("accounts.txt", "r") as file:
+        data = file.read()
+        # split account list by lines, and isolate user's accounts
+        data = data.split("\n")[user_id][:-1]
+        # split account names and passwords into seperate lists, and isolate desired password
+        data = data.split(";")[account_id * 2 + 1]
+    
+    menu = OledMenu([data, "exit"])
+    rotary_scroll(menu)
+    while menu.selected_option_id != menu.option_ids[-1]:
+        rotary_scroll(menu)
+
+    oled_clear()
