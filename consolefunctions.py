@@ -70,7 +70,7 @@ def add_account_to_user(user_id):
 
     while True:
         try:
-            account_name = input("Enter the name for the new account: ")
+            account_name = input("\nEnter the name for the new account: ")
             if len(account_name) < 1 or len(account_name) > 28 or ';' in account_name:
                 print("Error. Invalid account name. Name must be less than 28 characters and not contain ';'")
                 account_name = ""

@@ -1,1 +1,1 @@
-google;googlepassword123;facebook;thisisthefacebooklogin12;twitter;thisistwitterpassword;
+google;googlepassword123;facebook;thisisthefacebooklogin12;twitter;thisistwitterpassword;netflix;netflixpassword123;

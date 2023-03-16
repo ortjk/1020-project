@@ -16,10 +16,12 @@ while True:
                     if submenu == 0:
                         # view accounts
                         account_id = af.view_accounts_option_select(user_id)
-                        af.view_password(user_id, account_id)
+                        if account_id != -1:
+                            af.view_password(user_id, account_id)
 
                     elif submenu == 1:
                         # add new account
+                        af.redirect_to_console()
                         cf.add_account_to_user(user_id)
 
                     elif submenu == 2:
@@ -31,6 +33,7 @@ while True:
                         break
 
             else:
+                af.redirect_to_console()
                 print("Incorrect password entered. Redirecting to main menu...\n")
 
         # create new user
