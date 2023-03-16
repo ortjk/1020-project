@@ -60,11 +60,14 @@ def create_new_user():
     with open("userdata.txt", "a") as file:
         file.write(f"{username}\n{email}\n{passcode}\n")
 
+    with open("accounts.txt", "a") as file:
+        file.write("\n")
+
 
 def add_account_to_user(user_id):
     previous_file_data = ""
     with open("accounts.txt", "r") as file:
-        previous_file_data = file.read()
+        previous_file_data = file.read()[:-1]
 
     user_line = previous_file_data.split("\n")[user_id]
 
@@ -94,5 +97,8 @@ def add_account_to_user(user_id):
     new_file_data = previous_file_data.split("\n")
     new_file_data[user_id] = user_line
 
+    print(new_file_data)
+
     with open("accounts.txt", "w") as file:
-        file.writelines(new_file_data)
+        for i in new_file_data:
+            file.write(i + "\n")

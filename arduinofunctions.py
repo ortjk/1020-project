@@ -106,7 +106,11 @@ def view_accounts_option_select(user_id) -> int:
         # split account names and passwords into seperate lists, and isolate names
         data = data.split(";")[::2]
 
-    data += ["Back"]
+    print(data)
+    if data == [""]:
+        data = ["Back"]
+    else:
+        data += ["Back"]
     
     menu = OledMenu(data)
     rotary_scroll(menu)
