@@ -97,8 +97,8 @@ def add_account_to_user(user_id):
     new_file_data = previous_file_data.split("\n")
     new_file_data[user_id] = user_line
 
-    print(new_file_data)
-
     with open("accounts.txt", "w") as file:
         for i in new_file_data:
             file.write(i + "\n")
+
+

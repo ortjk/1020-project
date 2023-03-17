@@ -1,15 +1,15 @@
 import consolefunctions as cf
 import arduinofunctions as af
+import emailfunctions as ef
 
 while True:
     try:
-        print("Welcome to the password manager!\n1) Sign into your account\n2) Create a new account\n3) Exit")
-        choice = int(input("Enter your choice (1, 2, or 3): "))
+        print("Welcome to the password manager!\n1) Sign into existing user\n2) Create new user\n3) Forgot user password\n4) Exit")
+        choice = int(input("Enter your choice (1, 2, 3, or 4): "))
 
         # sign into user
         if choice == 1:
             user_id = af.user_select()
-            print(f"Selected user number {user_id + 1}")
             if af.enter_passcode(user_id):
                 while True:
                     submenu = af.signed_in_option_select()
@@ -40,6 +40,12 @@ while True:
         elif choice == 2:
             cf.create_new_user()
             print("User created successfully. Returning to the main menu...\n")
+
+        elif choice == 3:
+            print("Please select your username using the arduino")
+            user_id = af.user_select()
+            ef.send_password_to_user(user_id)
+            print("You have been sent an email containing your password.\n")
         
         # exit
         else:
