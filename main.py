@@ -26,7 +26,8 @@ while True:
 
                     elif submenu == 2:
                         # go into password reset
-                        pass
+                        af.redirect_to_console()
+                        cf.reset_user_password(user_id)
 
                     elif submenu == 3:
                         # exit

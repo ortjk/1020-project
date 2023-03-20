@@ -3,12 +3,6 @@ class EntryError(Exception):
     pass
 
 
-def verify_new_user_values(username="", email ="", passcode=0) -> bool:
-    if username != "" and email != "" and passcode != 0:
-        return False
-    return True
-
-
 def create_new_user():
     """Prompts the user to enter the information to create a new user profile, adding the information to userdata.txt
     
@@ -22,8 +16,8 @@ def create_new_user():
         # get input and verify that it is valid
         username = ""
         email = ""
-        passcode = 0
-        while verify_new_user_values(username, email, passcode):
+        passcode = ""
+        while True:
             try:
                 username = input("\nEnter the username for the new account: ")
                 if len(username) < 4 or len(username) > 28:
@@ -39,22 +33,20 @@ def create_new_user():
                 elif email in data[1::2]:
                     print("Error. Email already registered. Please try again with a different email.")
                     raise EntryError
-                passcode = int(input("Enter the 4-digit passcode: "))
-                if passcode <= 999 or passcode > 9999:
+                passcode = input("Enter the 4-digit passcode: ")
+                int(passcode)
+                if len(passcode) != 4:
                     print("Error. Passcode must be 4 digits. Please try again.")
                     raise EntryError
+                
+                break
 
             
             except ValueError:
                 print("Error, passcode must be numeric. Please try again.")
-                username = ""
-                email = ""
-                passcode = 0
 
             except EntryError:
-                username = ""
-                email = ""
-                passcode = 0
+                pass
     
     # add verified input to file
     with open("userdata.txt", "a") as file:
@@ -87,7 +79,7 @@ def add_account_to_user(user_id):
             
             user_line += f"{account_name};{account_password};"
 
-            go_next = input("Would you like to enter another password? (y/n)").lower()
+            go_next = input("Would you like to add another account? (y/n)").lower()
             if go_next != "y":
                 break
                 
@@ -102,3 +94,36 @@ def add_account_to_user(user_id):
             file.write(i + "\n")
 
 
+def reset_user_password(user_id):
+    print("\nChanging password.")
+
+    previous_file_data = ""
+    with open("userdata.txt", "r") as file:
+        previous_file_data = file.read().split("\n")[:-1]
+
+    passcode = ""
+    while True:
+        try:
+            passcode = input("Please enter the new 4-digit passcode: ")
+            int(passcode)
+            if len(passcode) != 4:
+                print("Error. Passcode must be 4 digits. Please try again.")
+                raise EntryError
+            
+            break
+
+        except ValueError:
+            print("Error, passcode must be numeric. Please try again.")
+
+        except EntryError:
+            pass
+
+    new_file_data = previous_file_data
+    new_file_data[3 * user_id + 2] = passcode
+
+    with open("userdata.txt", "w") as file:
+        for i in new_file_data:
+            file.write(i + "\n")
+
+    print("Password reset successful. Please continue input on the Arduino.")
+    
