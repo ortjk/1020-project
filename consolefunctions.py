@@ -1,8 +1,15 @@
+import regex as re
 import databasefunctions as dbf
 
 class EntryError(Exception):
     "Raised when input value is not usable"
     pass
+
+
+def validate_email(email_address: str) -> bool:
+   match = re.match(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", email_address)
+  
+   return bool(match)
 
 
 def create_new_user():
@@ -24,8 +31,8 @@ def create_new_user():
                 raise EntryError
             
             email = input("Enter your email: ")
-            if len(email) < 4:
-                print("Error. Email invalid. Please try again.")
+            if not validate_email(email):
+                print("Error. Invalid email address. Please try again.")
                 raise EntryError
             elif not dbf.is_email_unique(email):
                 print("Error. Email already registered. Please try again with a different email.")
@@ -38,12 +45,13 @@ def create_new_user():
                 raise EntryError
             
             break
-        
+
         except ValueError:
             print("Error, passcode must be numeric. Please try again.")
 
         except EntryError:
             pass
+
     
     # add verified input to file
     dbf.add_user(username, email, passcode)
