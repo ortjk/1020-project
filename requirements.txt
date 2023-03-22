@@ -1,2 +1,4 @@
-engi1020
-regex
+engi1020==5.1.2
+maskpass==0.3.7
+numpy==1.24.2
+regex==2022.10.31

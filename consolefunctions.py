@@ -1,4 +1,6 @@
 import regex as re
+import maskpass
+
 import databasefunctions as dbf
 
 class EntryError(Exception):
@@ -38,7 +40,7 @@ def create_new_user():
                 print("Error. Email already registered. Please try again with a different email.")
                 raise EntryError
             
-            passcode = input("Enter the 4-digit passcode: ")
+            passcode = maskpass.askpass(prompt="Enter the 4-digit passcode: ", mask="*")
             int(passcode)
             if len(passcode) != 4:
                 print("Error. Passcode must be 4 digits. Please try again.")
@@ -68,7 +70,7 @@ def add_account_to_user(user_id):
                 account_name = ""
                 raise EntryError
             
-            account_password = input("Enter the password for the new account: ")
+            account_password = maskpass.askpass(prompt="Enter the password for the new account: ", mask="")
             if len(account_password) < 1 or len(account_password) > 28 or ';' in account_password:
                 print("Error. Invalid password. Password must be less than 28 characters and not contain ';'")
                 account_password = ""
@@ -91,7 +93,7 @@ def reset_user_password(user_id):
     passcode = ""
     while True:
         try:
-            passcode = input("Please enter the new 4-digit passcode: ")
+            passcode = maskpass.askpass(prompt="Please enter the new 4-digit passcode: ", mask="*")
             int(passcode)
             if len(passcode) != 4:
                 print("Error. Passcode must be 4 digits. Please try again.")

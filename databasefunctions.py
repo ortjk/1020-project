@@ -1,6 +1,8 @@
 import sqlite3 as sql
 import numpy as np
 
+import encryptionfunctions as ef
+
 def init_database():
     conn = sql.connect("database.sqlite3")
 
@@ -57,6 +59,8 @@ def is_email_unique(email: str) -> bool:
 
 
 def add_user(user_name: str, user_email: str, user_passcode: str):
+    user_passcode = ef.encrypt_string(user_passcode)
+
     conn = sql.connect("database.sqlite3")
 
     conn.execute(f"INSERT INTO Users (Username,Email,Passcode) VALUES ('{user_name}', '{user_email}', '{user_passcode}');")
@@ -67,6 +71,8 @@ def add_user(user_name: str, user_email: str, user_passcode: str):
 
 def add_account_to_user(user_id: int, account_name: str, account_password: str):
     user_id += 1
+    account_password = ef.encrypt_string(account_password)
+
     conn = sql.connect("database.sqlite3")
     cur = conn.cursor()
 
@@ -81,6 +87,8 @@ def add_account_to_user(user_id: int, account_name: str, account_password: str):
 
 def set_user_passcode(user_id: int, passcode: str):
     user_id += 1
+    passcode = ef.encrypt_string(passcode)
+
     conn = sql.connect("database.sqlite3")
 
     conn.execute(f"UPDATE Users SET Passcode='{passcode}' WHERE ID={user_id}")
@@ -119,6 +127,8 @@ def get_user_passcode(user_id: int) -> str:
     passcode = cur.execute(f"SELECT Passcode FROM Users WHERE ID={user_id}").fetchall()[0][0]
     
     conn.close()
+
+    passcode = ef.decrypt_string(passcode)
     return passcode
 
 
@@ -164,6 +174,8 @@ def get_account_password(user_id: int, account_id: int) -> str:
     password = password.fetchall()[account_id][0]
 
     conn.close()
+
+    password = ef.decrypt_string(password)
 
     return password
 

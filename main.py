@@ -1,6 +1,6 @@
 import consolefunctions as cf
 import arduinofunctions as af
-import emailfunctions as ef
+import emailfunctions as emf
 
 while True:
     try:
@@ -45,7 +45,7 @@ while True:
         elif choice == 3:
             print("Please select your username using the arduino")
             user_id = af.user_select()
-            ef.send_password_to_user(user_id)
+            emf.send_password_to_user(user_id)
             print("You have been sent an email containing your password.\n")
         
         # exit
