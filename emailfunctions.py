@@ -2,6 +2,7 @@ import smtplib as sm
 import ssl
 import os
 from dotenv import load_dotenv
+import databasefunctions as dbf
 
 def send_password_to_user(user_id):
     port = 465
@@ -10,18 +11,11 @@ def send_password_to_user(user_id):
     sender_email = os.getenv("EMAIL_USERNAME")
     password = os.getenv("EMAIL_PASSWORD")
 
+    receiver_username = dbf.get_user_username(user_id)
+    receiver_email = dbf.get_user_email(user_id)
+    receiver_passcode = dbf.get_user_passcode(user_id)
 
-    receiver_email = ""
-    message = ""
-    with open("userdata.txt", "r") as file:
-        # get data
-        data = file.read().split("\n")
-        usernames = data[::3]
-        emails = data[1::3]
-        passwords = data[2::3]
-
-        receiver_email = emails[user_id]
-        message = f"Hello {usernames[user_id]},\n\nYour password is {passwords[user_id]}"
+    message = f"Hello {receiver_username},\n\nYour passcode is {receiver_passcode}"
 
     context = ssl.create_default_context()
 

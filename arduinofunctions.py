@@ -1,4 +1,5 @@
 from oledmenu import *
+import databasefunctions as dbf
 
 def rotary_scroll(menu):
     rotary = analog_read(0)
@@ -29,11 +30,7 @@ def display_passcode_options(selected_value, entered_digits):
 
 
 def user_select() -> int:
-    data = ""
-    with open("userdata.txt", "r") as file:
-        data = file.read()
-        # read every 3rd line, starting at the first
-        data = data.split("\n")[:-1:3]
+    data = dbf.get_users()
 
     menu = OledMenu(data)
 
@@ -45,14 +42,10 @@ def user_select() -> int:
 
 def enter_passcode(user_id) -> bool:
     entered_digits = ""
-    passcode = 0
-    with open("userdata.txt", "r") as file:
-        data = file.read()
-        passcode = data.split("\n")[2:-1:3][user_id]
+    passcode = dbf.get_user_passcode(user_id)
 
-        user = data.split("\n")[:-1:3][user_id]
-        print(f'\nPlease enter the passcode for user "{user}" using the rotary dial and button.')
-        print("The current selected digit will be displayed on the screen, and the previously entered values will appear in the top left.")
+    print(f'\nPlease enter the passcode using the rotary dial and button.')
+    print("The current selected digit will be displayed on the screen, and the previously entered values will appear in the top left.")
 
     selected_value = -2
     while True:
@@ -82,6 +75,7 @@ def enter_passcode(user_id) -> bool:
                 digital_write(4, True)
                 return True
             else:
+                print("Incorrect passcode entered.")
                 return False
             
 
@@ -98,16 +92,9 @@ def signed_in_option_select():
 
 
 def view_accounts_option_select(user_id) -> int:
-    data = ""
-    with open("accounts.txt", "r") as file:
-        data = file.read()
-        # split account list by lines, and isolate user's accounts
-        data = data.split("\n")[user_id][:-1]
-        # split account names and passwords into seperate lists, and isolate names
-        data = data.split(";")[::2]
+    data = dbf.get_user_accounts(user_id)
 
-    print(data)
-    if data == [""]:
+    if data == []:
         data = ["Back"]
     else:
         data += ["Back"]
@@ -126,13 +113,7 @@ def redirect_to_console():
 
 
 def view_password(user_id, account_id):
-    data = ""
-    with open("accounts.txt", "r") as file:
-        data = file.read()
-        # split account list by lines, and isolate user's accounts
-        data = data.split("\n")[user_id][:-1]
-        # split account names and passwords into seperate lists, and isolate desired password
-        data = data.split(";")[account_id * 2 + 1]
+    data = dbf.get_account_password(user_id, account_id)
     
     menu = OledMenu([data, "exit"])
     rotary_scroll(menu)

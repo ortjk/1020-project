@@ -1,3 +1,5 @@
+import databasefunctions as dbf
+
 class EntryError(Exception):
     "Raised when input value is not usable"
     pass
@@ -7,62 +9,49 @@ def create_new_user():
     """Prompts the user to enter the information to create a new user profile, adding the information to userdata.txt
     
     """
-    with open("userdata.txt", "r") as file:
-        data = file.read()
-        data = data.split("\n")
-        if len(data) < 4:
-            data = ["", "", "", ""]
-
-        # get input and verify that it is valid
-        username = ""
-        email = ""
-        passcode = ""
-        while True:
-            try:
-                username = input("\nEnter the username for the new account: ")
-                if len(username) < 4 or len(username) > 28:
-                    print("Error. Username must be within 4-28 characters. Please try again with a different username.")
-                    raise EntryError
-                elif username in data[::2]:
-                    print("Error. Username already registered. Please try again with a different username.")
-                    raise EntryError
-                email = input("Enter your email: ")
-                if len(email) < 4:
-                    print("Error. Email invalid. Please try again.")
-                    raise EntryError
-                elif email in data[1::2]:
-                    print("Error. Email already registered. Please try again with a different email.")
-                    raise EntryError
-                passcode = input("Enter the 4-digit passcode: ")
-                int(passcode)
-                if len(passcode) != 4:
-                    print("Error. Passcode must be 4 digits. Please try again.")
-                    raise EntryError
-                
-                break
-
+    # get input and verify that it is valid
+    username = ""
+    email = ""
+    passcode = ""
+    while True:
+        try:
+            username = input("\nEnter the username for the new account: ")
+            if len(username) < 4 or len(username) > 28:
+                print("Error. Username must be within 4-28 characters. Please try again with a different username.")
+                raise EntryError
+            elif not dbf.is_username_unique(username):
+                print("Error. Username already registered. Please try again with a different username.")
+                raise EntryError
             
-            except ValueError:
-                print("Error, passcode must be numeric. Please try again.")
+            email = input("Enter your email: ")
+            if len(email) < 4:
+                print("Error. Email invalid. Please try again.")
+                raise EntryError
+            elif not dbf.is_email_unique(email):
+                print("Error. Email already registered. Please try again with a different email.")
+                raise EntryError
+            
+            passcode = input("Enter the 4-digit passcode: ")
+            int(passcode)
+            if len(passcode) != 4:
+                print("Error. Passcode must be 4 digits. Please try again.")
+                raise EntryError
+            
+            break
+        
+        except ValueError:
+            print("Error, passcode must be numeric. Please try again.")
 
-            except EntryError:
-                pass
+        except EntryError:
+            pass
     
     # add verified input to file
-    with open("userdata.txt", "a") as file:
-        file.write(f"{username}\n{email}\n{passcode}\n")
-
-    with open("accounts.txt", "a") as file:
-        file.write("\n")
+    dbf.add_user(username, email, passcode)
 
 
 def add_account_to_user(user_id):
-    previous_file_data = ""
-    with open("accounts.txt", "r") as file:
-        previous_file_data = file.read()[:-1]
-
-    user_line = previous_file_data.split("\n")[user_id]
-
+    account_name = ""
+    account_password = ""
     while True:
         try:
             account_name = input("\nEnter the name for the new account: ")
@@ -76,8 +65,6 @@ def add_account_to_user(user_id):
                 print("Error. Invalid password. Password must be less than 28 characters and not contain ';'")
                 account_password = ""
                 raise EntryError
-            
-            user_line += f"{account_name};{account_password};"
 
             go_next = input("Would you like to add another account? (y/n)").lower()
             if go_next != "y":
@@ -86,20 +73,12 @@ def add_account_to_user(user_id):
         except EntryError:
             pass
         
-    new_file_data = previous_file_data.split("\n")
-    new_file_data[user_id] = user_line
-
-    with open("accounts.txt", "w") as file:
-        for i in new_file_data:
-            file.write(i + "\n")
+    # add verified input to file
+    dbf.add_account_to_user(user_id, account_name, account_password)
 
 
 def reset_user_password(user_id):
     print("\nChanging password.")
-
-    previous_file_data = ""
-    with open("userdata.txt", "r") as file:
-        previous_file_data = file.read().split("\n")[:-1]
 
     passcode = ""
     while True:
@@ -118,12 +97,7 @@ def reset_user_password(user_id):
         except EntryError:
             pass
 
-    new_file_data = previous_file_data
-    new_file_data[3 * user_id + 2] = passcode
-
-    with open("userdata.txt", "w") as file:
-        for i in new_file_data:
-            file.write(i + "\n")
+    dbf.set_user_passcode(user_id, passcode)
 
     print("Password reset successful. Please continue input on the Arduino.")
     
