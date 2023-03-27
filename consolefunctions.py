@@ -9,16 +9,22 @@ class EntryError(Exception):
 
 
 def validate_email(email_address: str) -> bool:
-   match = re.match(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", email_address)
+    """Check using regex if the string resembles the form of an email address.
+
+        Arguments:
+            email_address (str): The prospective email address.
+
+        Returns:
+            A boolean for whether email_address resembles the form of an email address.
+    """
+    match = re.match(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", email_address)
   
-   return bool(match)
+    return bool(match)
 
 
 def create_new_user():
-    """Prompts the user to enter the information to create a new user profile, adding the information to userdata.txt
-    
+    """Prompts the user to enter the information neede to create a new user profile, adding the verified information to the database.
     """
-    # get input and verify that it is valid
     username = ""
     email = ""
     passcode = ""
@@ -40,6 +46,7 @@ def create_new_user():
                 print("Error. Email already registered. Please try again with a different email.")
                 raise EntryError
             
+            # uses maskpass to hide digits entered
             passcode = maskpass.askpass(prompt="Enter the 4-digit passcode: ", mask="*")
             int(passcode)
             if len(passcode) != 4:
@@ -59,7 +66,12 @@ def create_new_user():
     dbf.add_user(username, email, passcode)
 
 
-def add_account_to_user(user_id):
+def add_account_to_user(user_id: int):
+    """Prompts the user to enter the information to add an account to their user, adding the verified information to the database.
+
+        Arguments:
+            user_id (int): The number corresponding to the user's account. Used to link the created account with their user.
+    """
     account_name = ""
     account_password = ""
     while True:
@@ -76,6 +88,7 @@ def add_account_to_user(user_id):
                 account_password = ""
                 raise EntryError
 
+            dbf.add_account_to_user(user_id, account_name, account_password)
             go_next = input("Would you like to add another account? (y/n)").lower()
             if go_next != "y":
                 break
@@ -83,11 +96,13 @@ def add_account_to_user(user_id):
         except EntryError:
             pass
         
-    # add verified input to file
-    dbf.add_account_to_user(user_id, account_name, account_password)
 
+def reset_user_password(user_id: int):
+    """Prompts the user to enter a new passcode for their user. Adds the verified 4-digit passcode to the database.
 
-def reset_user_password(user_id):
+        Arguments:
+            user_id (int): The number corresponding to the user's account. Used to change the correct user's passcode in the database.
+    """
     print("\nChanging password.")
 
     passcode = ""

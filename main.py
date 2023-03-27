@@ -35,18 +35,18 @@ while True:
 
             else:
                 af.redirect_to_console()
-                print("Incorrect password entered. Redirecting to main menu...\n")
 
         # create new user
         elif choice == 2:
             cf.create_new_user()
             print("User created successfully. Returning to the main menu...\n")
 
+        # send email with passcode
         elif choice == 3:
             print("Please select your username using the arduino")
             user_id = af.user_select()
             emf.send_password_to_user(user_id)
-            print("You have been sent an email containing your password.\n")
+            print("You have been sent an email containing your passcode.\n")
         
         # exit
         else:
