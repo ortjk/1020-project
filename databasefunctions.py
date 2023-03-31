@@ -80,6 +80,34 @@ def is_email_unique(email: str) -> bool:
         return True
 
 
+def is_account_name_unique(user_id: int, account_name: str) -> bool:
+    """Checks if an account name is unique for a particular user.
+
+        Arguments:
+            user_id (int): A number corresponding to the user.
+            account_name (str): The account name to check.
+
+        Returns:
+            A boolean for whether the user does have that account name.
+    """
+    user_id += 1
+
+    conn = sql.connect("database.sqlite3")
+    cur = conn.cursor()
+
+    user_name = cur.execute(f"SELECT Username FROM Users WHERE ID=?", [user_id])
+    user_name = user_name.fetchall()[0][0]
+
+    # attempt to find all instances of the account name
+    entry = cur.execute("SELECT AccountName FROM Accounts WHERE AccountName=? AND AccountOwner=?", [account_name, user_name]).fetchall()
+
+    conn.close()
+    if entry != []:
+        return False
+    else:
+        return True
+
+
 def add_user(user_name: str, user_email: str, user_passcode: str):
     """Create a user in the database from verified information.
 
@@ -267,3 +295,27 @@ def get_account_password(user_id: int, account_id: int) -> str:
 
     return password
 
+
+def set_account_password(user_id, account_id, password):
+    """Change the password of an existing account in the database.
+
+        Arguments:
+            user_id (int): Integer corresponding to the user, used to select the correct username in the database.
+            account_id (int): Integer corresponding to the account, used to select the correct account name in the database.
+            password (str): The new password.
+    """
+    user_id += 1
+    password = ef.encrypt_string(password)
+
+    conn = sql.connect("database.sqlite3")
+    cur = conn.cursor()
+
+    user_name = cur.execute(f"SELECT Username FROM Users WHERE ID=?", [user_id])
+    user_name = user_name.fetchall()[0][0]
+
+    account_name = cur.execute(f"SELECT AccountName FROM Accounts WHERE AccountOwner=?", [user_name]).fetchall()[account_id][0]
+
+    conn.execute("UPDATE Accounts SET AccountPassword=? WHERE AccountOwner=? AND AccountName=?", [password, user_name, account_name])
+
+    conn.commit()
+    conn.close()

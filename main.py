@@ -17,7 +17,10 @@ while True:
                         # view accounts
                         account_id = af.view_accounts_option_select(user_id)
                         if account_id != -1:
-                            af.view_password(user_id, account_id)
+                            edit_password = af.view_password(user_id, account_id)
+                            if edit_password:
+                                af.redirect_to_console()
+                                cf.edit_account_password(user_id, account_id)
 
                     elif submenu == 1:
                         # add new account
@@ -27,7 +30,7 @@ while True:
                     elif submenu == 2:
                         # go into password reset
                         af.redirect_to_console()
-                        cf.reset_user_password(user_id)
+                        cf.edit_user_password(user_id)
 
                     elif submenu == 3:
                         # exit

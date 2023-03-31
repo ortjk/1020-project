@@ -182,19 +182,29 @@ def redirect_to_console():
     oled_print("Use console to  enter           information")
 
 
-def view_password(user_id, account_id):
+def view_password(user_id, account_id) -> bool:
     """Starts the process to display the selected account's password on the Arduino. Instantiates a OledMenu.
 
         Arguments:
             user_id (int): The number corresponding to the signed in user. Used to find the accounts owned by the user in the database.
             account_id (int): The number corresponding to the selected account. Used to find the password of the account selected in the database.
+    
+        Returns:
+            A boolean corresponding to whether the user selected to edit the displayed password
     """
     data = dbf.get_account_password(user_id, account_id)
     
     # add exit to options
-    menu = OledMenu([data, "exit"])
-    rotary_scroll(menu)
-    while menu.selected_option_id != menu.option_ids[-1]:
+    menu = OledMenu([data, "Edit", "Exit"])
+
+    while True:
         rotary_scroll(menu)
+        # exit
+        if menu.selected_option_id == menu.option_ids[-1]:
+            break
+        elif menu.selected_option_id == menu.option_ids[-2]:
+            oled_clear()
+            return True
 
     oled_clear()
+    return False

@@ -28,27 +28,18 @@ class OledMenu:
     def update_displayed_lines(self):
         """Update displayed_lines to match displayed_line_ids
         """
-        # if there aren't any options being displayed yet, initialize the menu
-        if self.displayed_line_ids == []:
-            self.displayed_lines = self.lines[0:4]
-            self.displayed_lines[0] = "* " + self.displayed_lines[0][2:]
+        for i in range(len(self.displayed_line_ids)):
+            line_id = self.displayed_line_ids[i]
+            self.displayed_lines[i] = self.lines[line_id]
 
-            self.displayed_line_ids = self.line_ids[0:4]
-            self.displayed_options_ids = self.option_ids[0:4]
-        
-        else:
-            for i in range(len(self.displayed_line_ids)):
-                line_id = self.displayed_line_ids[i]
-                self.displayed_lines[i] = self.lines[line_id]
+            # change displayed_options_ids to match displayed_lines
+            self.displayed_options_ids[i] = self.option_ids[line_id]
 
-                # change displayed_options_ids to match displayed_lines
-                self.displayed_options_ids[i] = self.option_ids[line_id]
-
-            # put cursor on correct option
-            for i in range(len(self.displayed_options_ids)):
-                if self.selected_option_id == self.displayed_options_ids[i]:
-                    self.displayed_lines[i] = "* " + self.displayed_lines[i][2:]
-                    break
+        # put cursor on correct option
+        for i in range(len(self.displayed_options_ids)):
+            if self.selected_option_id == self.displayed_options_ids[i]:
+                self.displayed_lines[i] = "* " + self.displayed_lines[i][2:]
+                break
 
         self.update_oled()
     
@@ -62,7 +53,7 @@ class OledMenu:
         if direction == "up":
             # if the first option is currently selected
             if self.selected_option_id == self.displayed_options_ids[0]:
-                # if the second absolute option is not currently selected then the above option spans two lines
+                # if the second absolute option is not currently selected and the above option spans two lines
                 if self.selected_option_id != 1 and self.option_ids[self.displayed_line_ids[0] - 1] == self.option_ids[self.displayed_line_ids[0] - 2]:
                     # so move the position up two spaces
                     self.displayed_line_ids = [i - 2 for i in self.displayed_line_ids]
@@ -106,12 +97,12 @@ class OledMenu:
                 # move the menu
                 self.move_menu(direction)
             else:
-                # otherwise just move the cursor down
+                # otherwise just move the cursor up
                 self.selected_option_id -= 1
 
         elif direction == "down":
             # no check is needed for 2 line spanning options
-            # so just move the cursor up
+            # so just move the cursor down
             self.selected_option_id += 1
 
 
@@ -184,4 +175,10 @@ class OledMenu:
         self.selected_option_id = 0
 
         # initialize the OLED display
-        self.update_displayed_lines()
+        self.displayed_lines = self.lines[0:4]
+        self.displayed_lines[0] = "* " + self.displayed_lines[0][2:]
+
+        self.displayed_line_ids = self.line_ids[0:4]
+        self.displayed_options_ids = self.option_ids[0:4]
+
+        self.update_oled()
