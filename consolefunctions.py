@@ -1,13 +1,18 @@
+# 6.1
 import regex as re
+# 6.2
 import maskpass
 
+# 6.3
 import databasefunctions as dbf
 
+# 6.4
 class EntryError(Exception):
     "Raised when input value is not usable"
     pass
 
 
+# 6.5
 def validate_email(email_address: str) -> bool:
     """Check using regex if the string resembles the form of an email address.
 
@@ -22,6 +27,7 @@ def validate_email(email_address: str) -> bool:
     return bool(match)
 
 
+# 6.6
 def create_new_user():
     """Prompts the user to enter the information neede to create a new user profile, adding the verified information to the database.
     """
@@ -30,6 +36,7 @@ def create_new_user():
     passcode = ""
     while True:
         try:
+            # 6.6 a
             username = input("\nEnter the username for the new account: ")
             if len(username) < 4 or len(username) > 28 or username[0] == " ":
                 print("Error. Username must be within 4-28 characters. Please try again with a different username.")
@@ -38,6 +45,7 @@ def create_new_user():
                 print("Error. Username already registered. Please try again with a different username.")
                 raise EntryError
 
+            # 6.6 b
             email = input("Enter your email: ")
             if not validate_email(email) or " " in email:
                 print("Error. Invalid email address. Please try again.")
@@ -46,6 +54,7 @@ def create_new_user():
                 print("Error. Email already registered. Please try again with a different email.")
                 raise EntryError
             
+            # 6.6 c
             # uses maskpass to hide digits entered
             passcode = maskpass.askpass(prompt="Enter the 4-digit passcode: ", mask="*")
             int(passcode)
@@ -61,10 +70,12 @@ def create_new_user():
         except EntryError:
             pass
 
+    # 6.6 d
     # add verified input to file
     dbf.add_user(username, email, passcode)
 
 
+# 6.7
 def add_account_to_user(user_id: int):
     """Prompts the user to enter the information to add an account to their user, adding the verified information to the database.
 
@@ -75,6 +86,7 @@ def add_account_to_user(user_id: int):
     account_password = ""
     while True:
         try:
+            # 6.7 a
             account_name = input("\nEnter the name for the new account: ")
             if len(account_name) < 1 or len(account_name) > 28 or ';' in account_name:
                 print("Error. Invalid account name. Name must be less than 28 characters and not contain ';'")
@@ -84,13 +96,17 @@ def add_account_to_user(user_id: int):
                 print("Error. Account name is not unique.")
                 raise EntryError
             
+            # 6.7 b
             account_password = maskpass.askpass(prompt="Enter the password for the new account: ", mask="*")
             if len(account_password) < 1 or len(account_password) > 28 or ';' in account_password:
                 print("Error. Invalid password. Password must be less than 28 characters and not contain ';'")
                 account_password = ""
                 raise EntryError
 
+            # 6.7 c
             dbf.add_account_to_user(user_id, account_name, account_password)
+
+            # 6.7 d
             go_next = input("Would you like to add another account? (y/n) ").lower()
             if go_next != "y":
                 break
@@ -99,6 +115,7 @@ def add_account_to_user(user_id: int):
             pass
         
 
+# 6.8
 def edit_user_password(user_id: int):
     """Prompts the user to enter a new passcode for their user. Adds the verified 4-digit passcode to the database.
 
@@ -107,6 +124,7 @@ def edit_user_password(user_id: int):
     """
     print("\nChanging passcode.")
 
+    # 6.8 a
     passcode = ""
     while True:
         try:
@@ -124,11 +142,13 @@ def edit_user_password(user_id: int):
         except EntryError:
             pass
 
+    # 6.8 b
     dbf.set_user_passcode(user_id, passcode)
 
     print("Password reset successful. Please continue input on the Arduino.")
     
 
+# 6.9
 def edit_account_password(user_id, account_id):
     """Prompts the user to enter a new password for their account. Adds the verified password to the database.
 
@@ -138,6 +158,7 @@ def edit_account_password(user_id, account_id):
     """
     print("\nChanging password.")
 
+    # 6.9 a
     new_account_password = ""
     while True:
         try:
@@ -152,4 +173,5 @@ def edit_account_password(user_id, account_id):
         except EntryError:
             pass
     
+    # 6.9 b
     dbf.set_account_password(user_id, account_id, new_account_password)

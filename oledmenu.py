@@ -1,6 +1,9 @@
+# 4.1
 from engi1020.arduino.api import *
 
+# 4.2
 class OledMenu:
+    # 4.3
     def get_spanned_lines(self, option: str) -> int:
         """Find whether text would span 1 or 2 lines. 1 line is considered to be 14 characters.
 
@@ -17,6 +20,7 @@ class OledMenu:
             return 2
 
 
+    # 4.4
     def update_oled(self):
         """Update text that is actually displayed on the oled screen.
         """
@@ -25,9 +29,11 @@ class OledMenu:
             oled_print(i)
 
 
+    # 4.5
     def update_displayed_lines(self):
         """Update displayed_lines to match displayed_line_ids
         """
+        # 4.5 a
         for i in range(len(self.displayed_line_ids)):
             line_id = self.displayed_line_ids[i]
             self.displayed_lines[i] = self.lines[line_id]
@@ -35,21 +41,25 @@ class OledMenu:
             # change displayed_options_ids to match displayed_lines
             self.displayed_options_ids[i] = self.option_ids[line_id]
 
+        # 4.5 b
         # put cursor on correct option
         for i in range(len(self.displayed_options_ids)):
             if self.selected_option_id == self.displayed_options_ids[i]:
                 self.displayed_lines[i] = "* " + self.displayed_lines[i][2:]
                 break
 
+        # 4.5 c
         self.update_oled()
     
 
+    # 4.6
     def move_menu(self, direction: str):
         """Change the current position in the list of menu options.
 
             Arguments:
                 direction (str): The direction to move the position. Either 'up' or 'down'.
         """
+        # 4.6 a
         if direction == "up":
             # if the first option is currently selected
             if self.selected_option_id == self.displayed_options_ids[0]:
@@ -71,6 +81,7 @@ class OledMenu:
             # cursor now selects the first option
             self.selected_option_id = self.option_ids[self.displayed_line_ids[0]]
 
+        # 4.6 b
         elif direction == "down":
             # if the current selected option spans two lines
             if self.selected_option_id != self.option_ids[-2] and self.option_ids[self.displayed_line_ids[-1] + 1] == self.option_ids[self.displayed_line_ids[-1] + 2]:
@@ -85,12 +96,14 @@ class OledMenu:
             self.selected_option_id = self.option_ids[self.displayed_line_ids[-1]]
 
 
+    # 4.7
     def move_selected_option(self, direction: str):
         """Change the option which is currently selected.
 
             Arguments:
                 direction (str): The direction to move the selection. Either 'up' or 'down'.
         """
+        # 4.7 a
         if direction == "up":
             # if the first option being displayed is the second part of an option
             if (self.displayed_options_ids[0] == self.option_ids[self.displayed_line_ids[0] - 1] or self.displayed_line_ids[0] == - 1) and self.selected_option_id == self.displayed_options_ids[1]:
@@ -100,12 +113,14 @@ class OledMenu:
                 # otherwise just move the cursor up
                 self.selected_option_id -= 1
 
+        # 4.7 b
         elif direction == "down":
             # no check is needed for 2 line spanning options
             # so just move the cursor down
             self.selected_option_id += 1
 
 
+    # 4.8
     def scroll(self, direction: str):
         """Start the process to 'scroll' the menu in a specified direction.
 
@@ -141,6 +156,7 @@ class OledMenu:
             self.update_displayed_lines() # both of these calls are inside the if statements to prevent the oled from refreshing if the first option is being selected (better for ux)
     
 
+    # 4.9
     def __init__(self, all_options: list):
         """A class which handles the creation and state management of a menu system to be displayed onto the Arduino OLED screen.
 

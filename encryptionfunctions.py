@@ -1,7 +1,9 @@
+# 1.1
 from cryptography.fernet import Fernet
 import os
 from dotenv import load_dotenv
 
+# 1.2
 def encrypt_string(string_to_encrypt: str) -> str:
     """Encrypts a string.
 
@@ -24,6 +26,7 @@ def encrypt_string(string_to_encrypt: str) -> str:
     return token.decode("utf-8")
 
 
+# 1.3
 def decrypt_string(string_to_decrypt: str):
     """Decrypts a string.
 

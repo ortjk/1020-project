@@ -1,8 +1,11 @@
+# 2.1
 import sqlite3 as sql
 import numpy as np
 
+# 2.2
 import encryptionfunctions as ef
 
+# 2.3
 def init_database():
     """Initialize the empty database. For development only.
     """
@@ -25,6 +28,7 @@ def init_database():
     conn.close()
 
 
+# 2.4
 def reset_database():
     """Empty the database. For development only.
     """
@@ -36,6 +40,7 @@ def reset_database():
     conn.close()
     
 
+# 2.5
 def is_username_unique(user_name: str) -> bool:
     """Checks if a username already exists in the database.
 
@@ -58,6 +63,7 @@ def is_username_unique(user_name: str) -> bool:
         return True
     
 
+# 2.6
 def is_email_unique(email: str) -> bool:
     """Checks if an email already exists in the database.
 
@@ -80,6 +86,7 @@ def is_email_unique(email: str) -> bool:
         return True
 
 
+# 2.7
 def is_account_name_unique(user_id: int, account_name: str) -> bool:
     """Checks if an account name is unique for a particular user.
 
@@ -108,6 +115,7 @@ def is_account_name_unique(user_id: int, account_name: str) -> bool:
         return True
 
 
+# 2.8
 def add_user(user_name: str, user_email: str, user_passcode: str):
     """Create a user in the database from verified information.
 
@@ -126,6 +134,7 @@ def add_user(user_name: str, user_email: str, user_passcode: str):
     conn.close()
 
 
+# 2.9
 def add_account_to_user(user_id: int, account_name: str, account_password: str):
     """Create an account in the database from verified information, corresponding to a user.
 
@@ -149,6 +158,7 @@ def add_account_to_user(user_id: int, account_name: str, account_password: str):
     conn.close()
 
 
+# 2.10
 def set_user_passcode(user_id: int, passcode: str):
     """Change the passcode of a user in the database.
 
@@ -167,6 +177,7 @@ def set_user_passcode(user_id: int, passcode: str):
     conn.close()
 
 
+# 2.11
 def get_user_username(user_id: int) -> str:
     """Gets the username corresponding to a user id.
 
@@ -186,6 +197,7 @@ def get_user_username(user_id: int) -> str:
     return username
 
 
+# 2.12
 def get_user_email(user_id: int) -> str:
     """Gets the email corresponding to a user id.
 
@@ -205,6 +217,7 @@ def get_user_email(user_id: int) -> str:
     return email
 
 
+# 2.13
 def get_user_passcode(user_id: int) -> str:
     """Gets the passcode corresponding to a user id.
 
@@ -226,6 +239,7 @@ def get_user_passcode(user_id: int) -> str:
     return passcode
 
 
+# 2.14
 def get_users() -> list:
     """Gets all users in the database.
 
@@ -244,6 +258,7 @@ def get_users() -> list:
     return user_names
 
 
+# 2.15
 def get_user_accounts(user_id: int) -> list:
     """Gets all account names owned by a user.
 
@@ -269,6 +284,7 @@ def get_user_accounts(user_id: int) -> list:
     return accounts
 
 
+# 2.16
 def get_account_password(user_id: int, account_id: int) -> str:
     """Gets the password for an account.
 
@@ -296,6 +312,7 @@ def get_account_password(user_id: int, account_id: int) -> str:
     return password
 
 
+# 2.17
 def set_account_password(user_id, account_id, password):
     """Change the password of an existing account in the database.
 

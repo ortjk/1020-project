@@ -1,10 +1,13 @@
+# 3.1
 import smtplib as sm
 import ssl
 import os
 from dotenv import load_dotenv
 
+# 3.2
 import databasefunctions as dbf
 
+# 3.3
 def send_password_to_user(user_id: int):
     """Sends an email to a specefied user's email.
 

@@ -1,6 +1,9 @@
+# 5.1
 from oledmenu import *
+# 5.2
 import databasefunctions as dbf
 
+# 5.3
 def rotary_scroll(menu: OledMenu):
     """Continuously takes differential readings of the rotary potentiometer, and interacts with the OledMenu based on these readings. Ends when the button is pressed.
 
@@ -27,6 +30,7 @@ def rotary_scroll(menu: OledMenu):
         rotary = analog_read(0)
 
 
+# 5.4
 def convert_rotary_value(reading: int) -> int:
     """Convert the current rotary potentiometer reading to a number between -1 and 9, where the far left is low and far right is high.
 
@@ -39,6 +43,7 @@ def convert_rotary_value(reading: int) -> int:
     return 9 - (reading // 102)
 
 
+# 5.5
 def display_passcode_options(selected_value: int, entered_digits: str):
     """Display currently selected passcode value and previously selected digits on Arduino OLED screen.
 
@@ -57,6 +62,7 @@ def display_passcode_options(selected_value: int, entered_digits: str):
         oled_print(f"{entered_digits}_" + " " * (31 - len(entered_digits)) + f"    <- {selected_value} ->")
 
 
+# 5.6
 def user_select() -> int:
     """Start the process for the user to select their username on the Arduino. Instantiates an OledMenu object.
 
@@ -74,6 +80,7 @@ def user_select() -> int:
     return menu.selected_option_id
 
 
+# 5.7
 def enter_passcode(user_id: int) -> bool:
     """Starts the process for the user to enter their passcode on the Arduino.
 
@@ -89,6 +96,7 @@ def enter_passcode(user_id: int) -> bool:
     print(f'\nPlease enter the passcode using the rotary dial and button.')
     print("The current selected digit will be displayed on the screen, and the previously entered values will appear in the top left.")
 
+    # 5.7 a
     selected_value = -2
     while True:
         if len(entered_digits) < 4:
@@ -99,6 +107,7 @@ def enter_passcode(user_id: int) -> bool:
                 selected_value = nvalue
                 display_passcode_options(selected_value, entered_digits)
                 
+            # 5.7 b
             # if the button is pressed
             if digital_read(6):
                 # if exit is hovered then exit
@@ -116,6 +125,7 @@ def enter_passcode(user_id: int) -> bool:
                 oled_clear()
                 display_passcode_options(selected_value, entered_digits)
 
+        # 5.7 c
         # all 4 digits have been entered
         else:
             oled_clear()
@@ -129,6 +139,7 @@ def enter_passcode(user_id: int) -> bool:
                 return False
             
 
+# 5.8
 def signed_in_option_select() -> int:
     """Instantiates a OledMenu object for the signed in user options. User can view accounts, add an account, reset passcode, or sign out.
 
@@ -148,6 +159,7 @@ def signed_in_option_select() -> int:
     return menu.selected_option_id
 
 
+# 5.9
 def view_accounts_option_select(user_id) -> int:
     """Starts the process to display a list of the user's account's names on the Arduino. Creates a OledMenu object.
 
@@ -176,12 +188,7 @@ def view_accounts_option_select(user_id) -> int:
     return menu.selected_option_id
 
 
-def redirect_to_console():
-    """Prints text on the Arduino to redirect the user to input information on the console.
-    """
-    oled_print("Use console to  enter           information")
-
-
+# 5.10
 def view_password(user_id, account_id) -> bool:
     """Starts the process to display the selected account's password on the Arduino. Instantiates a OledMenu.
 
@@ -192,11 +199,13 @@ def view_password(user_id, account_id) -> bool:
         Returns:
             A boolean corresponding to whether the user selected to edit the displayed password
     """
+    # 5.10 a
     data = dbf.get_account_password(user_id, account_id)
     
     # add exit to options
     menu = OledMenu([data, "Edit", "Exit"])
 
+    # 5.10 b
     while True:
         rotary_scroll(menu)
         # exit
@@ -208,3 +217,10 @@ def view_password(user_id, account_id) -> bool:
 
     oled_clear()
     return False
+
+
+# 5.11
+def redirect_to_console():
+    """Prints text on the Arduino to redirect the user to input information on the console.
+    """
+    oled_print("Use console to  enter           information")
