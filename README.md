@@ -7,6 +7,7 @@
 <h4>1.1</h4>
 
 START
+
 Print to the user the options to either sign in, create a new user, recover their passcode, or exit the application
 If the option to sign in is chosen: **(1.2)**
 
@@ -17,6 +18,7 @@ If the option to recover password is chosen:
 	- Loop back to original menu
 If the option to exit the application is chosen:
 	- Close the application
+	
 END
 
 <h4>1.2</h4>
