@@ -8,10 +8,10 @@
 
 START
 Print to the user the options to either sign in, create a new user, recover their passcode, or exit the application
-If the option to sign in is chosen:
-	  (1.2)
-If the option to create a new user is chosen:
-	  (1.3)
+If the option to sign in is chosen: **(1.2)**
+
+If the option to create a new user is chosen: **(1.3)**
+
 If the option to recover password is chosen:
 	- Send email to the selected user
 	- Loop back to original menu
